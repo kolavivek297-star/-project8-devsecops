@@ -1,11 +1,29 @@
+
 version: 0.2
 
 phases:
   build:
     commands:
+      - echo "Starting Project 8 DevSecOps Pipeline"
+
       - echo "Validating application files"
       - test -f index.html
       - grep -q "Secure Cloud Deployment" index.html
+
+      - echo "Running security checks"
+      - |
+        if grep -Eiq 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' index.html; then
+          echo "SECURITY FAILED: Possible exposed credentials"
+          exit 1
+        fi
+
+      - |
+        if grep -Eiq '<script[^>]+src="http://' index.html; then
+          echo "SECURITY FAILED: Insecure HTTP script detected"
+          exit 1
+        fi
+
+      - echo "Security checks passed"
       - echo "Starting EC2 deployment"
 
       - |
