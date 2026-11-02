@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Validating application files"
+      - test -f index.html
+      - grep -q "Secure Cloud Deployment" index.html
+      - echo "Build validation successful"
+
+artifacts:
+  files:
+    - appspec.yml
+    - index.html
+    - README.md
