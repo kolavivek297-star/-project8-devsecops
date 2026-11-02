@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 8 - DevSecOps</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 40px;
+            background: #1e293b;
+            border-radius: 15px;
+        }
+        h1 { color: #38bdf8; }
+        .status { color: #4ade80; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Cloud Deployment</h1>
+        <h2>DevSecOps Pipeline - Project 8</h2>
+        <p>Application successfully deployed using AWS.</p>
+        <p class="status">Deployment Status: ACTIVE</p>
+        <p>Powered by AWS CodePipeline, CodeBuild and CodeDeploy.</p>
+    </div>
+</body>
+</html>
