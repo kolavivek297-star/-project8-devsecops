@@ -6,10 +6,42 @@ phases:
       - echo "Validating application files"
       - test -f index.html
       - grep -q "Secure Cloud Deployment" index.html
-      - echo "Build validation successful"
+      - echo "Starting EC2 deployment"
 
-artifacts:
-  files:
-    - appspec.yml
-    - index.html
-    - README.md
+      - |
+        COMMAND_ID=$(aws ssm send-command \
+          --region ap-south-1 \
+          --instance-ids i-01089bc144f3a829c \
+          --document-name "AWS-RunShellScript" \
+          --comment "Project8 automated deployment" \
+          --parameters 'commands=["curl -fL https://raw.githubusercontent.com/kolavivek297-star/-project8-devsecops/main/index.html -o /var/www/html/index.html","chmod 644 /var/www/html/index.html","systemctl restart httpd"]' \
+          --query "Command.CommandId" \
+          --output text)
+
+        echo "Command ID: $COMMAND_ID"
+
+        for i in $(seq 1 30); do
+          STATUS=$(aws ssm get-command-invocation \
+            --region ap-south-1 \
+            --command-id "$COMMAND_ID" \
+            --instance-id i-01089bc144f3a829c \
+            --query Status \
+            --output text 2>/dev/null || true)
+
+          echo "Deployment status: $STATUS"
+
+          if [ "$STATUS" = "Success" ]; then
+            exit 0
+          fi
+
+          if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
+            exit 1
+          fi
+
+          sleep 5
+        done
+
+        echo "Deployment timed out"
+        exit 1
+
+      - echo "Deployment completed successfully"
